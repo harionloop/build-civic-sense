@@ -2,109 +2,216 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 
-// Define the content for all 10 learning chapters.
+// Define the content for all 10 learning chapters with headings and subheadings.
 const chapters = [
   {
     title: "Chapter 1: The Foundation of Civic Sense",
-    content: [
-      "Civic sense is an unwritten code of conduct that people in a society are expected to follow. It's about respecting public spaces, being courteous to others, and contributing to a harmonious community.",
-      "Developing a strong civic sense is a journey of small, consistent actions that build a better society for everyone. It starts with self-awareness and extends to how we interact with the world around us."
+    sections: [
+      {
+        heading: "What is Civic Sense?",
+        content: [
+          "Civic sense is an unwritten code of conduct that people in a society are expected to follow. It's about respecting public spaces, being courteous to others, and contributing to a harmonious community. It's not about big, grand gestures, but the small, consistent actions that collectively make a big impact."
+        ],
+        lottie: {
+          "v": "5.7.4", "fr": 30, "ip": 0, "op": 60, "w": 100, "h": 100, "nm": "Civic Sense Start", "ddd": 0,
+          "assets": [],
+          "layers": [{ "ddd": 0, "ind": 1, "ty": 4, "nm": "Circle", "sr": 1, "ks": { "o": { "a": 0, "k": 100 }, "r": { "a": 1, "k": [{ "i": { "x": 0.67, "y": 0 }, "o": { "x": 0.33, "y": 1 }, "t": 0, "v": 0 }, { "t": 60, "v": 360 }] }, "p": { "a": 0, "k": [50, 50, 0] }, "s": { "a": 0, "k": [100, 100, 100] } }, "ao": 0, "shapes": [{ "ty": "gr", "it": [{ "ty": "el", "d": 1, "s": { "a": 0, "k": [60, 60] }, "p": { "a": 0, "k": [0, 0] } }, { "ty": "st", "c": { "a": 0, "k": [0.6, 0.4, 0.9, 1] }, "o": { "a": 0, "k": 100 }, "w": { "a": 0, "k": 5 } }, { "ty": "tr", "p": { "a": 0, "k": [0, 0] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] } }], "nm": "Ellipse Group" }], "ip": 0, "op": 60 }]
+        }
+      },
+      {
+        heading: "Why It Matters",
+        content: [
+          "A strong civic sense is the bedrock of a well-functioning society. It reduces conflict, promotes public safety, and fosters a sense of collective ownership. When everyone contributes, the community becomes a more pleasant and efficient place to live.",
+          "This app is your guide to understanding and practicing these core values, helping you become a more responsible and respected member of your community."
+        ]
+      }
     ],
-    lottie: {
-      "v": "5.7.4", "fr": 30, "ip": 0, "op": 60, "w": 100, "h": 100, "nm": "Civic Sense Start", "ddd": 0,
-      "assets": [],
-      "layers": [{ "ddd": 0, "ind": 1, "ty": 4, "nm": "Circle", "sr": 1, "ks": { "o": { "a": 0, "k": 100 }, "r": { "a": 1, "k": [{ "i": { "x": 0.67, "y": 0 }, "o": { "x": 0.33, "y": 1 }, "t": 0, "v": 0 }, { "t": 60, "v": 360 }] }, "p": { "a": 0, "k": [50, 50, 0] }, "s": { "a": 0, "k": [100, 100, 100] } }, "ao": 0, "shapes": [{ "ty": "gr", "it": [{ "ty": "el", "d": 1, "s": { "a": 0, "k": [60, 60] }, "p": { "a": 0, "k": [0, 0] } }, { "ty": "st", "c": { "a": 0, "k": [0.6, 0.4, 0.9, 1] }, "o": { "a": 0, "k": 100 }, "w": { "a": 0, "k": 5 } }, { "ty": "tr", "p": { "a": 0, "k": [0, 0] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] } }], "nm": "Ellipse Group" }], "ip": 0, "op": 60 }]
-    }
   },
   {
     title: "Chapter 2: Responsibility to Public Spaces",
-    content: [
-      "Public spaces like parks, streets, and public transport are shared resources. It is everyone's responsibility to keep them clean and well-maintained.",
-      "Simple acts like using a dustbin, not littering, and reporting damages can make a huge difference in creating a more pleasant environment for all."
-    ],
-    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-green-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    sections: [
+      {
+        heading: "Keep it Clean",
+        content: [
+          "Public spaces like parks, streets, and public transport are shared resources. It is everyone's responsibility to keep them clean and well-maintained. Littering is a major issue that detracts from the beauty and cleanliness of our surroundings."
+        ],
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-green-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>`
+      },
+      {
+        heading: "Vandalism and Damage",
+        content: [
+          "Defacing public property, whether through graffiti or physical damage, is not just a crime; it's a direct attack on the community's resources. Such acts cost taxpayers money and make the environment less inviting for everyone. Report damages instead of ignoring them."
+        ]
+      },
+      {
+        heading: "Small Acts, Big Impact",
+        content: [
+          "Simple acts like using a dustbin, not littering, and reporting damages can make a huge difference in creating a more pleasant environment for all. It's about treating these spaces as if they were your own home."
+        ]
+      }
+    ]
   },
   {
     title: "Chapter 3: Respecting Public Property",
-    content: [
-      "Public property, from benches and buses to monuments and libraries, belongs to the community. Vandalism, graffiti, and misuse not only cost taxpayers but also degrade our shared heritage.",
-      "A key part of civic sense is treating public property with the same care and respect you would treat your own. Be a guardian of your community's assets."
-    ],
-    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-blue-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    sections: [
+      {
+        heading: "Shared Ownership",
+        content: [
+          "Public property, from benches and buses to monuments and libraries, belongs to the community. Vandalism, graffiti, and misuse not only cost taxpayers but also degrade our shared heritage."
+        ],
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-blue-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.468 9.563 5 8 5a4 4 0 000 8h2m0-8h2m-2 8a4 4 0 01-8 0H3c.801-4.04 4.145-6.6 8.5-6.6a9.492 9.492 0 014.288.948" />
           </svg>`
+      },
+      {
+        heading: "A Personal Responsibility",
+        content: [
+          "A key part of civic sense is treating public property with the same care and respect you would treat your own. Be a guardian of your community's assets and encourage others to do the same."
+        ]
+      }
+    ]
   },
   {
     title: "Chapter 4: Noise Pollution & Etiquette",
-    content: [
-      "Noise pollution can be a major source of frustration in shared living spaces. Loud conversations, blaring music, and excessive honking all contribute to a less peaceful environment.",
-      "Practice quiet etiquette in public places like hospitals and libraries. A little thoughtfulness goes a long way in ensuring a calm and respectful atmosphere for everyone."
-    ],
-    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-red-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    sections: [
+      {
+        heading: "The Problem of Noise",
+        content: [
+          "Noise pollution can be a major source of frustration in shared living spaces. Loud conversations on phones, blaring music, and excessive honking all contribute to a less peaceful environment. This can be especially disruptive in residential areas and public transport."
+        ],
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-red-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.899a9 9 0 010 12.728M8.464 8.464l7.072 7.072m-.707 3.536a5 5 0 01-7.072 0m-2.828 9.899a9 9 0 01-12.728 0m.707-.707l-7.072-7.072" />
           </svg>`
+      },
+      {
+        heading: "Practice Quiet Etiquette",
+        content: [
+          "Practice quiet etiquette in public places like hospitals, libraries, and movie theaters. This shows respect for others who need a peaceful environment. A little thoughtfulness goes a long way in ensuring a calm and respectful atmosphere for everyone."
+        ]
+      }
+    ]
   },
   {
     title: "Chapter 5: Road Safety & Traffic Rules",
-    content: [
-      "Following traffic rules is not just a legal obligation; it's a fundamental aspect of civic sense that ensures the safety of all road users. This includes pedestrians, cyclists, and drivers.",
-      "Always use crosswalks, respect traffic signals, and give way to emergency vehicles. These simple actions prevent accidents and contribute to a smoother flow of traffic."
-    ],
-    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-yellow-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    sections: [
+      {
+        heading: "It's a Shared Responsibility",
+        content: [
+          "Following traffic rules is not just a legal obligation; it's a fundamental aspect of civic sense that ensures the safety of all road users. This includes pedestrians, cyclists, and drivers. Ignoring rules puts everyone at risk."
+        ],
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-yellow-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v14m-9 0v-5m-6 5V9m9 0h6m-3-6h.01M9 19v-5" />
           </svg>`
+      },
+      {
+        heading: "Simple Rules to Live By",
+        content: [
+          "Always use crosswalks, respect traffic signals, and give way to emergency vehicles. These simple actions prevent accidents and contribute to a smoother flow of traffic. Be a patient and predictable presence on the road."
+        ]
+      }
+    ]
   },
   {
     title: "Chapter 6: Environment & Waste Management",
-    content: [
-      "Proper waste disposal is crucial for a clean environment. Segregating waste, recycling, and composting are simple ways we can reduce our carbon footprint and preserve natural resources.",
-      "Avoid single-use plastics and choose sustainable alternatives whenever possible. Every small effort helps in the collective fight against environmental degradation."
-    ],
-    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-teal-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    sections: [
+      {
+        heading: "Proper Waste Disposal",
+        content: [
+          "Proper waste disposal is crucial for a clean environment. Segregating waste into recyclables and non-recyclables is a simple yet impactful habit. Remember that a clean neighborhood reflects a conscientious community."
+        ],
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-teal-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>`
+      },
+      {
+        heading: "Reduce, Reuse, Recycle",
+        content: [
+          "Avoid single-use plastics and choose sustainable alternatives whenever possible. Every small effort helps in the collective fight against environmental degradation. Your choices as a consumer have a direct impact on the world around you."
+        ]
+      }
+    ]
   },
   {
     title: "Chapter 7: Respect for Others",
-    content: [
-      "Civic sense goes beyond physical spaces; it extends to our interactions with people. Politeness, empathy, and patience are the cornerstones of a respectful society.",
-      "Be considerate of others in queues, hold doors for people, and offer help to those in need. These small gestures create a ripple effect of kindness in the community."
-    ],
-    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-pink-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    sections: [
+      {
+        heading: "Beyond Physical Spaces",
+        content: [
+          "Civic sense goes beyond physical spaces; it extends to our interactions with people. Politeness, empathy, and patience are the cornerstones of a respectful society. This is especially true in crowded public areas."
+        ],
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-pink-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
           </svg>`
+      },
+      {
+        heading: "The Ripple Effect",
+        content: [
+          "Be considerate of others in queues, hold doors for people, and offer help to those in need. These small gestures create a ripple effect of kindness in the community. They cost nothing but are invaluable to a healthy social fabric."
+        ]
+      }
+    ]
   },
   {
     title: "Chapter 8: Water & Energy Conservation",
-    content: [
-      "Our natural resources are finite. Civic sense includes a responsibility to conserve water and energy for future generations.",
-      "Turn off lights when you leave a room, fix leaky faucets, and be mindful of your water usage. Every drop and watt saved contributes to a more sustainable future."
-    ],
-    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-indigo-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    sections: [
+      {
+        heading: "Conserving Our Resources",
+        content: [
+          "Our natural resources are finite. Civic sense includes a responsibility to conserve water and energy for future generations. This is a crucial element of being a responsible global citizen."
+        ],
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-indigo-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>`
+      },
+      {
+        heading: "Habits for a Sustainable Future",
+        content: [
+          "Turn off lights when you leave a room, fix leaky faucets, and be mindful of your water usage. Every drop and watt saved contributes to a more sustainable future. These habits start at home and can be applied everywhere you go."
+        ]
+      }
+    ]
   },
   {
     title: "Chapter 9: The Role of Community",
-    content: [
-      "A community is a collective. Participating in local events, volunteering for neighborhood clean-ups, and helping your neighbors builds a stronger, more connected society.",
-      "Being an active and engaged member of your community helps foster a sense of belonging and collective responsibility."
-    ],
-    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-gray-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    sections: [
+      {
+        heading: "Building a Collective",
+        content: [
+          "A community is a collective. Participating in local events, volunteering for neighborhood clean-ups, and helping your neighbors builds a stronger, more connected society. Don't be a passive bystander; be an active participant."
+        ],
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-gray-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h-7c-2.761 0-5-2.239-5-5s2.239-5 5-5h7l-3-3m0 6l3 3m-3-3v-6" />
           </svg>`
+      },
+      {
+        heading: "Fostering a Sense of Belonging",
+        content: [
+          "Being an active and engaged member of your community helps foster a sense of belonging and collective responsibility. When you contribute, you'll feel a greater connection to the people and places around you."
+        ]
+      }
+    ]
   },
   {
     title: "Chapter 10: Digital Civic Sense",
-    content: [
-      "In the modern age, civic sense extends to the digital world. This includes responsible social media use, avoiding the spread of misinformation, and being respectful in online communities.",
-      "Think before you post, fact-check information, and remember that there's a real person behind every screen. Your online actions have a real-world impact."
-    ],
-    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-purple-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    sections: [
+      {
+        heading: "Civic Sense in the Digital World",
+        content: [
+          "In the modern age, civic sense extends to the digital world. This includes responsible social media use, avoiding the spread of misinformation, and being respectful in online communities. The same rules of respect and politeness apply online."
+        ],
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-purple-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
           </svg>`
+      },
+      {
+        heading: "Think Before You Post",
+        content: [
+          "Before sharing something online, consider its accuracy and potential impact. Fact-check information, and remember that there's a real person behind every screen. Your online actions have a real-world impact, both on others and on your own reputation."
+        ]
+      }
+    ]
   }
 ];
 
@@ -127,6 +234,7 @@ const Learning = ({ onNavigate }) => {
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
   const [summaryText, setSummaryText] = useState('');
   const [isSummarizing, setIsSummarizing] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const chapterRef = useRef(null);
 
   useEffect(() => {
@@ -137,7 +245,8 @@ const Learning = ({ onNavigate }) => {
         { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }
       );
     }
-    // Clear summary when chapter changes
+    // Reset scroll progress and clear summary when chapter changes
+    setScrollProgress(0);
     setSummaryText('');
   }, [currentChapterIndex]);
 
@@ -156,10 +265,18 @@ const Learning = ({ onNavigate }) => {
     }
   };
 
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    if (scrollHeight > clientHeight) {
+      const progress = (scrollTop / (scrollHeight - clientHeight)) * 100;
+      setScrollProgress(progress);
+    }
+  };
+
   const handleGenerateSummary = async () => {
     setIsSummarizing(true);
     setSummaryText('');
-    const currentContent = chapters[currentChapterIndex].content.join(' ');
+    const currentContent = chapters[currentChapterIndex].sections.map(s => s.content.join(' ')).join(' ');
     const systemPrompt = "Act as a helpful study guide. Provide a concise, single-paragraph summary of the following text.";
     const userQuery = `Summarize the following content in a single paragraph: ${currentContent}`;
     const apiKey = "";
@@ -197,40 +314,60 @@ const Learning = ({ onNavigate }) => {
     <div className="flex flex-col items-center p-8 min-h-screen">
       <h2 className="text-3xl font-bold text-white mb-6">Learning Center</h2>
       <div className="bg-gray-800 rounded-xl shadow-2xl p-6 md:p-10 w-full max-w-4xl text-gray-200">
-        <div ref={chapterRef}>
-          <h3 className="text-2xl font-semibold text-purple-400 mb-4">{currentChapter.title}</h3>
-          {currentChapter.content.map((paragraph, index) => (
-            <p key={index} className="mb-4 text-lg leading-relaxed">{paragraph}</p>
-          ))}
-          <div className="w-64 h-64 mx-auto mb-6 flex items-center justify-center">
-            {currentChapter.lottie ? (
-              <lottie-player
-                src={JSON.stringify(currentChapter.lottie)}
-                autoplay
-                loop
-                mode="normal"
-                style={{ width: '100%', height: '100%' }}
-              ></lottie-player>
-            ) : (
-              <div dangerouslySetInnerHTML={{ __html: currentChapter.svg }}></div>
-            )}
-          </div>
-          <div className="flex justify-center mt-6">
-            <button
-              onClick={handleGenerateSummary}
-              disabled={isSummarizing}
-              className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-6 rounded-full shadow-lg transition duration-300"
-            >
-              {isSummarizing ? 'Summarizing...' : '✨ Get Summary'}
-            </button>
-          </div>
-          {summaryText && (
-            <div className="mt-6 p-4 bg-gray-700 rounded-lg">
-              <h4 className="font-semibold mb-2">Summary:</h4>
-              <p className="text-sm">{summaryText}</p>
-            </div>
-          )}
+        <h3 className="text-2xl font-semibold text-purple-400 mb-4">{currentChapter.title}</h3>
+
+        {/* Progress Bar */}
+        <div className="w-full h-2 mb-4 bg-gray-600 rounded-full">
+          <div
+            className="h-2 bg-green-500 rounded-full transition-all duration-100"
+            style={{ width: `${scrollProgress}%` }}
+          ></div>
         </div>
+
+        <div
+          ref={chapterRef}
+          className="max-h-[60vh] overflow-y-auto pr-4"
+          onScroll={handleScroll}
+        >
+          {currentChapter.sections.map((section, sectionIndex) => (
+            <div key={sectionIndex} className="mb-6">
+              <h4 className="text-xl font-bold text-white mb-2">{section.heading}</h4>
+              {section.lottie && (
+                <div className="w-64 h-64 mx-auto mb-6 flex items-center justify-center">
+                  <lottie-player
+                    src={JSON.stringify(section.lottie)}
+                    autoplay
+                    loop
+                    mode="normal"
+                    style={{ width: '100%', height: '100%' }}
+                  ></lottie-player>
+                </div>
+              )}
+              {section.svg && (
+                <div className="w-64 h-64 mx-auto mb-6 flex items-center justify-center" dangerouslySetInnerHTML={{ __html: section.svg }}></div>
+              )}
+              {section.content.map((paragraph, pIndex) => (
+                <p key={pIndex} className="mb-4 text-lg leading-relaxed">{paragraph}</p>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={handleGenerateSummary}
+            disabled={isSummarizing}
+            className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-6 rounded-full shadow-lg transition duration-300"
+          >
+            {isSummarizing ? 'Summarizing...' : '✨ Get Summary'}
+          </button>
+        </div>
+        {summaryText && (
+          <div className="mt-6 p-4 bg-gray-700 rounded-lg">
+            <h4 className="font-semibold mb-2">Summary:</h4>
+            <p className="text-sm">{summaryText}</p>
+          </div>
+        )}
         <div className="flex justify-between mt-6">
           <button
             onClick={handlePrevious}
@@ -241,7 +378,8 @@ const Learning = ({ onNavigate }) => {
           </button>
           <button
             onClick={handleNext}
-            className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition duration-300"
+            disabled={scrollProgress < 99}
+            className={`bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition duration-300 ${scrollProgress < 99 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
           >
             {currentChapterIndex === chapters.length - 1 ? "Go to Quiz" : "Next Chapter"}
           </button>
