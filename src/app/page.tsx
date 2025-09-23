@@ -10,6 +10,7 @@ const App = () => {
   const [currentView, setCurrentView] = useState('home');
   const [civicScore, setCivicScore] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -26,16 +27,23 @@ const App = () => {
     setCurrentView('progress');
   };
 
+  const handleNavigateToCategories = () => {
+    setSelectedCategory(null);
+    setCurrentView('learn');
+  };
+
   const renderView = () => {
     switch (currentView) {
       case 'home':
         return <Home onNavigate={setCurrentView} />;
       case 'learn':
-        return <Learning onNavigate={setCurrentView} isDarkMode={isDarkMode} />;
+        return <Learning onNavigate={setCurrentView} isDarkMode={isDarkMode} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />;
       case 'quiz':
         return <Quiz onNavigate={setCurrentView} onQuizComplete={handleQuizComplete} />;
       case 'progress':
         return <Progress score={civicScore} onNavigate={setCurrentView} />;
+      case 'about':
+        return <About />;
       default:
         return <Home onNavigate={setCurrentView} />;
     }
@@ -53,43 +61,27 @@ const App = () => {
         body, html {
           font-family: 'Inter', sans-serif;
           overflow-x: hidden;
-          background: #111;
+        }
+        .dark body, .dark html {
+          background: linear-gradient(135deg, #2a3e5e, #1a2a44);
           color: #fff;
         }
-        .main-container {
-          background: linear-gradient(135deg, #2a3e5e, #1a2a44);
+        .light body, .light html {
+          background: linear-gradient(135deg, #e2e8f0, #f8fafc);
+          color: #333;
         }
-        .glass-card {
+
+        /* Glass card effect for dark mode */
+        .dark .glass-card {
           background: rgba(255, 255, 255, 0.08);
           backdrop-filter: blur(10px);
           border: 1px solid rgba(255, 255, 255, 0.18);
           box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
-        .glass-card:hover {
+        .dark .glass-card:hover {
             box-shadow: 0 8px 48px 0 rgba(109, 40, 217, 0.5);
         }
-        .nav-link {
-          color: #d1d5db;
-        }
-        .nav-link:hover {
-          color: #fff;
-          background: rgba(255, 255, 255, 0.1);
-        }
-        .nav-icon {
-            color: #d1d5db;
-        }
-        .nav-icon:hover {
-            color: #fff;
-        }
-
-        /* Light Theme overrides */
-        .light body, .light html {
-          background: #f0f2f5;
-          color: #333;
-        }
-        .light .main-container {
-          background: linear-gradient(135deg, #e2e8f0, #f8fafc);
-        }
+        /* Glass card effect for light mode */
         .light .glass-card {
           background: rgba(255, 255, 255, 0.5);
           backdrop-filter: blur(10px);
@@ -99,6 +91,23 @@ const App = () => {
         .light .glass-card:hover {
             box-shadow: 0 8px 48px 0 rgba(109, 40, 217, 0.2);
         }
+
+        /* Navigation links for dark mode */
+        .dark .nav-link {
+          color: #d1d5db;
+        }
+        .dark .nav-link:hover {
+          color: #fff;
+          background: rgba(255, 255, 255, 0.1);
+        }
+        .dark .nav-icon {
+          color: #d1d5db;
+        }
+        .dark .nav-icon:hover {
+            color: #fff;
+        }
+
+        /* Navigation links for light mode */
         .light .nav-link {
           color: #4b5563;
         }
@@ -114,63 +123,46 @@ const App = () => {
         }
 
         /* Themed text colors */
-        .themed-text {
+        .dark .themed-text {
             color: #fff;
         }
         .light .themed-text {
             color: #111;
         }
-        .themed-subtext {
+        .dark .themed-subtext {
             color: #9ca3af;
         }
         .light .themed-subtext {
             color: #4b5563;
         }
-        .themed-card-text {
+        .dark .themed-card-text {
             color: #fff;
         }
         .light .themed-card-text {
             color: #111;
         }
-        .themed-card-subtext {
+        .dark .themed-card-subtext {
             color: #d1d5db;
         }
         .light .themed-card-subtext {
             color: #4b5563;
         }
-        .themed-link {
+        .dark .themed-link {
             color: #c084fc;
         }
         .light .themed-link {
             color: #7c3aed;
         }
-
-        /* Specific component colors for light theme */
-        .light .learning-section .bg-white.bg-opacity-5 {
-            background-color: rgba(255, 255, 255, 0.7);
-        }
-        .light .learning-section .bg-white.bg-opacity-10 {
-            background-color: rgba(255, 255, 255, 0.5);
-        }
-        .light .learning-section .text-white {
-            color: #111;
-        }
-        .light .learning-section .text-gray-200 {
-            color: #4b5563;
-        }
-        .light .learning-section .text-gray-400 {
-            color: #6b7280;
-        }
       `}</style>
-      <div className="main-container min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="main-container min-h-screen flex flex-col items-center justify-between p-4">
         {/* Navigation bar with glassy effect */}
-        <nav className="fixed top-0 left-0 right-0 z-50 p-4 glass-card bg-opacity-20 backdrop-blur-sm shadow-lg rounded-b-3xl">
+        <nav className="fixed top-0 left-0 right-0 z-50 p-4 glass-card backdrop-blur-sm shadow-lg rounded-b-3xl">
           <div className="flex justify-between items-center w-full max-w-6xl mx-auto">
             {/* Left side for back button */}
             <div className="flex items-center">
-              {(currentView === 'learn') && (
+              {(currentView === 'learn' && selectedCategory) && (
                 <button
-                  onClick={() => setCurrentView('learn')}
+                  onClick={handleNavigateToCategories}
                   className="mr-4 transition duration-200 nav-icon"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -205,6 +197,12 @@ const App = () => {
               >
                 Progress
               </button>
+              <button
+                onClick={() => setCurrentView('about')}
+                className="nav-link font-medium px-4 py-2 rounded-full"
+              >
+                About
+              </button>
             </div>
             {/* Right side for theme toggle */}
             <div className="flex items-center">
@@ -225,6 +223,7 @@ const App = () => {
         <main className="mt-24 w-full max-w-6xl">
           {renderView()}
         </main>
+        <Footer />
       </div>
     </>
   );
@@ -238,15 +237,14 @@ const Home = ({ onNavigate }) => (
     </p>
     <button
       onClick={() => onNavigate('learn')}
-      className="bg-white bg-opacity-10 themed-text font-bold py-4 px-10 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105 hover:bg-opacity-20 backdrop-blur-md light:bg-gray-200 light:bg-opacity-70 light:hover:bg-gray-300 light:text-gray-800"
+      className="bg-white bg-opacity-10 themed-text font-bold py-4 px-10 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105 hover:bg-opacity-20 backdrop-blur-md dark:bg-opacity-10 dark:text-white light:bg-gray-200 light:bg-opacity-70 light:hover:bg-gray-300 light:text-gray-800"
     >
       Start Learning
     </button>
   </div>
 );
 
-const Learning = ({ onNavigate, isDarkMode }) => {
-  const [selectedCategory, setSelectedCategory] = useState(null);
+const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
   const [summaryText, setSummaryText] = useState('');
   const [isSummarizing, setIsSummarizing] = useState(false);
@@ -294,15 +292,6 @@ const Learning = ({ onNavigate, isDarkMode }) => {
       chapterRef.current.scrollTop = 0; // Scroll to top of new chapter
     } else {
       onNavigate('quiz');
-    }
-  };
-
-  const handlePreviousChapter = () => {
-    if (currentChapterIndex > 0) {
-      setCurrentChapterIndex(currentChapterIndex - 1);
-      chapterRef.current.scrollTop = 0;
-    } else {
-      setSelectedCategory(null);
     }
   };
 
@@ -362,7 +351,6 @@ const Learning = ({ onNavigate, isDarkMode }) => {
                 setSelectedCategory(category);
                 setCurrentChapterIndex(0);
               }}
-              isDarkMode={isDarkMode}
             />
           ))}
         </div>
@@ -379,7 +367,7 @@ const Learning = ({ onNavigate, isDarkMode }) => {
         <h3 className="text-2xl font-semibold themed-link mb-4 text-center">{selectedCategory.title} - {currentChapter.title}</h3>
 
         {/* Overall Chapter Progress Bar */}
-        <div className="w-full h-2 mb-4 bg-white bg-opacity-10 rounded-full light:bg-gray-300">
+        <div className="w-full h-2 mb-4 bg-white bg-opacity-10 rounded-full dark:bg-opacity-10 light:bg-gray-300">
           <div
             className="h-2 bg-gradient-to-r from-purple-400 to-green-300 rounded-full transition-all duration-300"
             style={{ width: `${scrollProgress}%` }}
@@ -392,14 +380,14 @@ const Learning = ({ onNavigate, isDarkMode }) => {
           onScroll={handleScroll}
         >
           {/* Vertical timeline line */}
-          <div className="absolute left-4 top-0 bottom-0 w-1 bg-white bg-opacity-10 rounded-full z-0 transform -translate-x-1/2 light:bg-gray-300"></div>
+          <div className="absolute left-4 top-0 bottom-0 w-1 bg-white bg-opacity-10 rounded-full z-0 transform -translate-x-1/2 dark:bg-opacity-10 light:bg-gray-300"></div>
 
           {currentChapter.sections.map((section, sectionIndex) => (
             <div key={sectionIndex} className="learning-section relative pl-12 py-8 group">
               {/* Timeline circle */}
-              <div className="absolute left-4 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-purple-400 z-10 transition-all duration-300 group-hover:scale-150 group-hover:bg-purple-300 light:bg-purple-600 light:group-hover:bg-purple-400"></div>
+              <div className="absolute left-4 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-purple-400 z-10 transition-all duration-300 group-hover:scale-150 group-hover:bg-purple-300"></div>
 
-              <div className="bg-white bg-opacity-5 rounded-2xl shadow-inner p-6 transform transition-all duration-300 group-hover:scale-[1.02] light:bg-gray-100 light:bg-opacity-50">
+              <div className="glass-card rounded-2xl shadow-inner p-6 transform transition-all duration-300 group-hover:scale-[1.02]">
                 <h4 className="text-xl font-bold themed-card-text mb-4">{section.heading}</h4>
                 {section.lottie && (
                   <div className="w-64 h-64 mx-auto mb-6 flex items-center justify-center">
@@ -416,7 +404,7 @@ const Learning = ({ onNavigate, isDarkMode }) => {
                   <div className="w-64 h-64 mx-auto mb-6 flex items-center justify-center" dangerouslySetInnerHTML={{ __html: section.svg }}></div>
                 )}
                 {section.content && section.content.map((paragraph, pIndex) => (
-                  <p key={pIndex} className="mb-4 text-lg leading-relaxed light:text-gray-700">{paragraph}</p>
+                  <p key={pIndex} className="mb-4 text-lg leading-relaxed themed-card-subtext">{paragraph}</p>
                 ))}
                 {section.tip && (
                   <div className="mt-4">
@@ -430,8 +418,8 @@ const Learning = ({ onNavigate, isDarkMode }) => {
 
         <div className="flex justify-between mt-6 w-full max-w-sm">
           <button
-            onClick={() => setSelectedCategory(null)} // Back to categories logic
-            className={`bg-white bg-opacity-10 themed-card-text font-bold py-2 px-6 rounded-full transition duration-300 light:bg-gray-200 light:text-gray-800 hover:bg-opacity-20 light:hover:bg-gray-300`}
+            onClick={() => setSelectedCategory(null)}
+            className={`glass-card themed-card-text font-bold py-2 px-6 rounded-full transition duration-300 dark:bg-opacity-10 dark:hover:bg-opacity-20 light:bg-gray-200 light:text-gray-800 light:hover:bg-gray-300`}
           >
             Back to Categories
           </button>
@@ -448,7 +436,7 @@ const Learning = ({ onNavigate, isDarkMode }) => {
           <button
             onClick={handleGenerateSummary}
             disabled={isSummarizing}
-            className="bg-white bg-opacity-10 hover:bg-opacity-20 themed-card-text font-bold py-2 px-6 rounded-full shadow-lg transition duration-300 light:bg-gray-200 light:text-gray-800"
+            className="glass-card themed-card-text font-bold py-2 px-6 rounded-full shadow-lg transition duration-300 dark:bg-opacity-10 dark:hover:bg-opacity-20 light:bg-gray-200 light:text-gray-800 light:hover:bg-gray-300"
           >
             {isSummarizing ? 'Summarizing...' : '✨ Get Summary'}
           </button>
@@ -464,11 +452,11 @@ const Learning = ({ onNavigate, isDarkMode }) => {
   );
 };
 
-const CategoryCard = ({ category, onClick, isDarkMode }) => {
+const CategoryCard = ({ category, onClick }) => {
   const cardRef = useRef(null);
-  const gsap = window.gsap;
 
   useEffect(() => {
+    const gsap = window.gsap;
     if (gsap) {
       gsap.fromTo(cardRef.current,
         { opacity: 0, y: 50 },
@@ -478,12 +466,14 @@ const CategoryCard = ({ category, onClick, isDarkMode }) => {
   }, []);
 
   const handleMouseEnter = () => {
+    const gsap = window.gsap;
     if(gsap) {
         gsap.to(cardRef.current, { scale: 1.05, duration: 0.3 });
     }
   };
 
   const handleMouseLeave = () => {
+    const gsap = window.gsap;
     if(gsap) {
         gsap.to(cardRef.current, { scale: 1, duration: 0.3 });
     }
@@ -506,7 +496,6 @@ const CategoryCard = ({ category, onClick, isDarkMode }) => {
   );
 };
 
-
 const TipCard = ({ tip }) => {
   const [isRevealed, setIsRevealed] = useState(false);
   const cardRef = useRef(null);
@@ -523,7 +512,7 @@ const TipCard = ({ tip }) => {
   }, [isRevealed]);
 
   return (
-    <div className="glass-card rounded-xl p-4 transition-all duration-300">
+    <div className="glass-card rounded-xl p-4 transition-all duration-300 dark:bg-opacity-10 dark:hover:bg-opacity-20 light:bg-gray-200 light:text-gray-800 light:hover:bg-gray-300">
       <button
         onClick={() => setIsRevealed(!isRevealed)}
         className="flex items-center justify-between w-full themed-card-text font-semibold transform transition-transform duration-300 hover:scale-[1.02]"
@@ -570,7 +559,7 @@ const Quiz = ({ onNavigate, onQuizComplete }) => {
             <button
               key={index}
               onClick={() => handleAnswer(index)}
-              className="bg-white bg-opacity-10 hover:bg-opacity-20 text-left themed-card-text py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-105 light:bg-gray-200 light:bg-opacity-70 light:hover:bg-gray-300"
+              className="bg-white bg-opacity-10 hover:bg-opacity-20 text-left themed-card-text py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-105"
             >
               {option}
             </button>
@@ -625,7 +614,7 @@ const Progress = ({ score, onNavigate }) => {
       <h2 className="text-3xl font-bold themed-text mb-6">Your Progress</h2>
       <div className="glass-card rounded-xl p-6 md:p-10 w-full max-w-2xl themed-subtext text-center">
         <p className="text-xl mb-4">Your current score is: <span className="themed-link font-bold">{score} / {quizQuestions.length}</span></p>
-        <div className="w-full bg-white bg-opacity-10 rounded-full h-4 mb-4 overflow-hidden light:bg-gray-300">
+        <div className="w-full bg-white bg-opacity-10 rounded-full h-4 mb-4 overflow-hidden dark:bg-opacity-10 light:bg-gray-300">
           <div
             className="h-4 bg-gradient-to-r from-purple-400 to-green-300 rounded-full transition-all duration-700 ease-out"
             style={{ width: `${progressPercentage}%` }}
@@ -635,7 +624,7 @@ const Progress = ({ score, onNavigate }) => {
         <button
           onClick={handleGenerateTip}
           disabled={isGeneratingTip}
-          className="bg-white bg-opacity-10 hover:bg-opacity-20 themed-card-text font-bold py-2 px-6 rounded-full shadow-lg transition duration-300 mb-4 light:bg-gray-200 light:text-gray-800"
+          className="glass-card themed-card-text font-bold py-2 px-6 rounded-full shadow-lg transition duration-300 mb-4 dark:bg-opacity-10 dark:hover:bg-opacity-20 light:bg-gray-200 light:text-gray-800 light:hover:bg-gray-300"
         >
           {isGeneratingTip ? 'Generating Tip...' : '✨ Get a Personalized Tip'}
         </button>
@@ -647,7 +636,7 @@ const Progress = ({ score, onNavigate }) => {
           )}
         <button
           onClick={() => onNavigate('home')}
-          className="bg-white bg-opacity-10 hover:bg-opacity-20 themed-card-text font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 hover:scale-105 light:bg-gray-200 light:bg-opacity-70 light:text-gray-800"
+          className="glass-card themed-card-text font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 hover:scale-105 dark:bg-opacity-10 dark:hover:bg-opacity-20 light:bg-gray-200 light:bg-opacity-70 light:text-gray-800 light:hover:bg-gray-300"
         >
           Go Back Home
         </button>
@@ -655,4 +644,46 @@ const Progress = ({ score, onNavigate }) => {
     </div>
   );
 };
+
+const About = () => (
+  <div className="flex flex-col items-center p-8 min-h-[calc(100vh-6rem)]">
+    <h2 className="text-3xl font-bold themed-text mb-6">About the App</h2>
+    <div className="glass-card rounded-3xl p-6 md:p-10 w-full max-w-4xl themed-subtext text-center mb-8">
+      <p className="text-lg leading-relaxed mb-4">
+        This application, **Civic Sense**, is designed to promote social awareness and responsible behavior in a modern, interactive way. Our goal is to make learning about civic duties and social etiquette an engaging and rewarding experience for everyone.
+      </p>
+      <p className="text-lg leading-relaxed">
+        Through interactive learning modules, quizzes, and personalized progress tracking, we hope to foster a stronger sense of community and a more considerate society.
+      </p>
+    </div>
+
+    <h3 className="text-2xl font-bold themed-text mb-4">About the Developer</h3>
+    <div className="glass-card rounded-3xl p-6 md:p-10 w-full max-w-2xl themed-subtext text-center">
+      <p className="text-xl font-semibold mb-2 themed-card-text">Hariom Sharma</p>
+      <p className="text-lg mb-4 themed-card-subtext">Software Developer</p>
+      <p className="text-md leading-relaxed mb-4">
+        I am a passionate software developer dedicated to building applications that make a positive impact. With a focus on creating intuitive user interfaces and robust functionality, I strive to build products that are both powerful and delightful to use.
+      </p>
+      <div className="flex justify-center space-x-6 mt-4">
+        <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" className="themed-link hover:underline">
+          LinkedIn
+        </a>
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="themed-link hover:underline">
+          GitHub
+        </a>
+        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="themed-link hover:underline">
+          Twitter
+        </a>
+      </div>
+    </div>
+  </div>
+);
+
+const Footer = () => (
+  <footer className="w-full text-center py-4 text-sm themed-subtext opacity-60 mt-auto">
+    <p>&copy; {new Date().getFullYear()} Hariom Sharma. All Rights Reserved.</p>
+  </footer>
+);
+
+
 export default App;
