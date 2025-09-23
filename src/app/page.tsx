@@ -1,103 +1,471 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React, { useState, useEffect, useRef } from 'react';
+
+// Define the content for all 10 learning chapters.
+const chapters = [
+  {
+    title: "Chapter 1: The Foundation of Civic Sense",
+    content: [
+      "Civic sense is an unwritten code of conduct that people in a society are expected to follow. It's about respecting public spaces, being courteous to others, and contributing to a harmonious community.",
+      "Developing a strong civic sense is a journey of small, consistent actions that build a better society for everyone. It starts with self-awareness and extends to how we interact with the world around us."
+    ],
+    lottie: {
+      "v": "5.7.4", "fr": 30, "ip": 0, "op": 60, "w": 100, "h": 100, "nm": "Civic Sense Start", "ddd": 0,
+      "assets": [],
+      "layers": [{ "ddd": 0, "ind": 1, "ty": 4, "nm": "Circle", "sr": 1, "ks": { "o": { "a": 0, "k": 100 }, "r": { "a": 1, "k": [{ "i": { "x": 0.67, "y": 0 }, "o": { "x": 0.33, "y": 1 }, "t": 0, "v": 0 }, { "t": 60, "v": 360 }] }, "p": { "a": 0, "k": [50, 50, 0] }, "s": { "a": 0, "k": [100, 100, 100] } }, "ao": 0, "shapes": [{ "ty": "gr", "it": [{ "ty": "el", "d": 1, "s": { "a": 0, "k": [60, 60] }, "p": { "a": 0, "k": [0, 0] } }, { "ty": "st", "c": { "a": 0, "k": [0.6, 0.4, 0.9, 1] }, "o": { "a": 0, "k": 100 }, "w": { "a": 0, "k": 5 } }, { "ty": "tr", "p": { "a": 0, "k": [0, 0] }, "a": { "a": 0, "k": [0, 0] }, "s": { "a": 0, "k": [100, 100] } }], "nm": "Ellipse Group" }], "ip": 0, "op": 60 }]
+    }
+  },
+  {
+    title: "Chapter 2: Responsibility to Public Spaces",
+    content: [
+      "Public spaces like parks, streets, and public transport are shared resources. It is everyone's responsibility to keep them clean and well-maintained.",
+      "Simple acts like using a dustbin, not littering, and reporting damages can make a huge difference in creating a more pleasant environment for all."
+    ],
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-green-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>`
+  },
+  {
+    title: "Chapter 3: Respecting Public Property",
+    content: [
+      "Public property, from benches and buses to monuments and libraries, belongs to the community. Vandalism, graffiti, and misuse not only cost taxpayers but also degrade our shared heritage.",
+      "A key part of civic sense is treating public property with the same care and respect you would treat your own. Be a guardian of your community's assets."
+    ],
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-blue-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.468 9.563 5 8 5a4 4 0 000 8h2m0-8h2m-2 8a4 4 0 01-8 0H3c.801-4.04 4.145-6.6 8.5-6.6a9.492 9.492 0 014.288.948" />
+          </svg>`
+  },
+  {
+    title: "Chapter 4: Noise Pollution & Etiquette",
+    content: [
+      "Noise pollution can be a major source of frustration in shared living spaces. Loud conversations, blaring music, and excessive honking all contribute to a less peaceful environment.",
+      "Practice quiet etiquette in public places like hospitals and libraries. A little thoughtfulness goes a long way in ensuring a calm and respectful atmosphere for everyone."
+    ],
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-red-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.899a9 9 0 010 12.728M8.464 8.464l7.072 7.072m-.707 3.536a5 5 0 01-7.072 0m-2.828 9.899a9 9 0 01-12.728 0m.707-.707l-7.072-7.072" />
+          </svg>`
+  },
+  {
+    title: "Chapter 5: Road Safety & Traffic Rules",
+    content: [
+      "Following traffic rules is not just a legal obligation; it's a fundamental aspect of civic sense that ensures the safety of all road users. This includes pedestrians, cyclists, and drivers.",
+      "Always use crosswalks, respect traffic signals, and give way to emergency vehicles. These simple actions prevent accidents and contribute to a smoother flow of traffic."
+    ],
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-yellow-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v14m-9 0v-5m-6 5V9m9 0h6m-3-6h.01M9 19v-5" />
+          </svg>`
+  },
+  {
+    title: "Chapter 6: Environment & Waste Management",
+    content: [
+      "Proper waste disposal is crucial for a clean environment. Segregating waste, recycling, and composting are simple ways we can reduce our carbon footprint and preserve natural resources.",
+      "Avoid single-use plastics and choose sustainable alternatives whenever possible. Every small effort helps in the collective fight against environmental degradation."
+    ],
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-teal-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>`
+  },
+  {
+    title: "Chapter 7: Respect for Others",
+    content: [
+      "Civic sense goes beyond physical spaces; it extends to our interactions with people. Politeness, empathy, and patience are the cornerstones of a respectful society.",
+      "Be considerate of others in queues, hold doors for people, and offer help to those in need. These small gestures create a ripple effect of kindness in the community."
+    ],
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-pink-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>`
+  },
+  {
+    title: "Chapter 8: Water & Energy Conservation",
+    content: [
+      "Our natural resources are finite. Civic sense includes a responsibility to conserve water and energy for future generations.",
+      "Turn off lights when you leave a room, fix leaky faucets, and be mindful of your water usage. Every drop and watt saved contributes to a more sustainable future."
+    ],
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-indigo-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>`
+  },
+  {
+    title: "Chapter 9: The Role of Community",
+    content: [
+      "A community is a collective. Participating in local events, volunteering for neighborhood clean-ups, and helping your neighbors builds a stronger, more connected society.",
+      "Being an active and engaged member of your community helps foster a sense of belonging and collective responsibility."
+    ],
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-gray-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h-7c-2.761 0-5-2.239-5-5s2.239-5 5-5h7l-3-3m0 6l3 3m-3-3v-6" />
+          </svg>`
+  },
+  {
+    title: "Chapter 10: Digital Civic Sense",
+    content: [
+      "In the modern age, civic sense extends to the digital world. This includes responsible social media use, avoiding the spread of misinformation, and being respectful in online communities.",
+      "Think before you post, fact-check information, and remember that there's a real person behind every screen. Your online actions have a real-world impact."
+    ],
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-purple-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
+          </svg>`
+  }
+];
+
+const Home = ({ onNavigate }) => (
+  <div className="flex flex-col items-center justify-center p-8 text-center min-h-screen">
+    <h1 className="text-4xl font-extrabold text-white mb-4">Master Your Civic Sense</h1>
+    <p className="text-xl text-gray-300 max-w-2xl mb-8">
+      Welcome! Embark on a journey to learn about civic duties, test your knowledge, and track your progress.
+    </p>
+    <button
+      onClick={() => onNavigate('learn')}
+      className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 hover:scale-105"
+    >
+      Start Learning
+    </button>
+  </div>
+);
+
+const Learning = ({ onNavigate }) => {
+  const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
+  const [summaryText, setSummaryText] = useState('');
+  const [isSummarizing, setIsSummarizing] = useState(false);
+  const chapterRef = useRef(null);
+
+  useEffect(() => {
+    // GSAP animation for the chapter content
+    if (window.gsap && chapterRef.current) {
+      window.gsap.fromTo(chapterRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }
+      );
+    }
+    // Clear summary when chapter changes
+    setSummaryText('');
+  }, [currentChapterIndex]);
+
+  const handleNext = () => {
+    if (currentChapterIndex < chapters.length - 1) {
+      setCurrentChapterIndex(currentChapterIndex + 1);
+    } else {
+      // If at the end, navigate to the quiz
+      onNavigate('quiz');
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentChapterIndex > 0) {
+      setCurrentChapterIndex(currentChapterIndex - 1);
+    }
+  };
+
+  const handleGenerateSummary = async () => {
+    setIsSummarizing(true);
+    setSummaryText('');
+    const currentContent = chapters[currentChapterIndex].content.join(' ');
+    const systemPrompt = "Act as a helpful study guide. Provide a concise, single-paragraph summary of the following text.";
+    const userQuery = `Summarize the following content in a single paragraph: ${currentContent}`;
+    const apiKey = "";
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+    const payload = {
+        contents: [{ parts: [{ text: userQuery }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+    };
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        const generatedText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (generatedText) {
+            setSummaryText(generatedText);
+        } else {
+            setSummaryText('Failed to generate summary. Please try again.');
+        }
+    } catch (error) {
+        console.error("Error generating summary:", error);
+        setSummaryText('An error occurred. Please try again.');
+    } finally {
+        setIsSummarizing(false);
+    }
+  };
+
+  const currentChapter = chapters[currentChapterIndex];
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex flex-col items-center p-8 min-h-screen">
+      <h2 className="text-3xl font-bold text-white mb-6">Learning Center</h2>
+      <div className="bg-gray-800 rounded-xl shadow-2xl p-6 md:p-10 w-full max-w-4xl text-gray-200">
+        <div ref={chapterRef}>
+          <h3 className="text-2xl font-semibold text-purple-400 mb-4">{currentChapter.title}</h3>
+          {currentChapter.content.map((paragraph, index) => (
+            <p key={index} className="mb-4 text-lg leading-relaxed">{paragraph}</p>
+          ))}
+          <div className="w-64 h-64 mx-auto mb-6 flex items-center justify-center">
+            {currentChapter.lottie ? (
+              <lottie-player
+                src={JSON.stringify(currentChapter.lottie)}
+                autoplay
+                loop
+                mode="normal"
+                style={{ width: '100%', height: '100%' }}
+              ></lottie-player>
+            ) : (
+              <div dangerouslySetInnerHTML={{ __html: currentChapter.svg }}></div>
+            )}
+          </div>
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={handleGenerateSummary}
+              disabled={isSummarizing}
+              className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-6 rounded-full shadow-lg transition duration-300"
+            >
+              {isSummarizing ? 'Summarizing...' : '✨ Get Summary'}
+            </button>
+          </div>
+          {summaryText && (
+            <div className="mt-6 p-4 bg-gray-700 rounded-lg">
+              <h4 className="font-semibold mb-2">Summary:</h4>
+              <p className="text-sm">{summaryText}</p>
+            </div>
+          )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <div className="flex justify-between mt-6">
+          <button
+            onClick={handlePrevious}
+            disabled={currentChapterIndex === 0}
+            className={`bg-gray-600 text-white font-bold py-2 px-6 rounded-full transition duration-300 ${currentChapterIndex === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-500'}`}
+          >
+            Previous
+          </button>
+          <button
+            onClick={handleNext}
+            className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition duration-300"
+          >
+            {currentChapterIndex === chapters.length - 1 ? "Go to Quiz" : "Next Chapter"}
+          </button>
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+const quizQuestions = [
+  {
+    question: "You see a public park bench that is dirty. What do you do?",
+    options: [
+      "Find a dust cloth and wipe it clean.",
+      "Ignore it and find another bench.",
+      "Complain about the local government.",
+    ],
+    answerIndex: 0,
+  },
+  {
+    question: "Someone is speaking loudly on their phone on a bus. What is the best action?",
+    options: [
+      "Start a conversation with them.",
+      "Politely ask them to lower their voice.",
+      "Join in and talk even louder.",
+    ],
+    answerIndex: 1,
+  },
+  {
+    question: "You finish eating a snack and there is no trash can nearby. What do you do with the wrapper?",
+    options: [
+      "Leave it on the ground.",
+      "Put it in your pocket until you find a trash can.",
+      "Throw it into a bush.",
+    ],
+    answerIndex: 1,
+  },
+];
+
+const Quiz = ({ onNavigate, onQuizComplete }) => {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+
+  const handleAnswer = (index) => {
+    if (index === quizQuestions[currentQuestion].answerIndex) {
+      setScore(prevScore => prevScore + 1);
+    }
+    const nextQuestion = currentQuestion + 1;
+    if (nextQuestion < quizQuestions.length) {
+      setCurrentQuestion(nextQuestion);
+    } else {
+      onQuizComplete(score + (index === quizQuestions[currentQuestion].answerIndex ? 1 : 0));
+    }
+  };
+
+  const question = quizQuestions[currentQuestion];
+
+  return (
+    <div className="flex flex-col items-center p-8 min-h-screen">
+      <h2 className="text-3xl font-bold text-white mb-6">Civic Sense Quiz</h2>
+      <div className="bg-gray-800 rounded-xl shadow-2xl p-6 md:p-10 w-full max-w-2xl text-gray-200">
+        <h3 className="text-xl font-semibold mb-4">{question.question}</h3>
+        <div className="flex flex-col space-y-4">
+          {question.options.map((option, index) => (
+            <button
+              key={index}
+              onClick={() => handleAnswer(index)}
+              className="bg-gray-700 hover:bg-purple-600 text-left text-white py-3 px-6 rounded-lg shadow-md transition duration-300 transform hover:scale-105"
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Progress = ({ score, onNavigate }) => {
+  const progressPercentage = (score / quizQuestions.length) * 100;
+  const [tipText, setTipText] = useState('');
+  const [isGeneratingTip, setIsGeneratingTip] = useState(false);
+
+  const handleGenerateTip = async () => {
+    setIsGeneratingTip(true);
+    setTipText('');
+    const systemPrompt = "Act as a motivational civic sense coach. Provide a single, actionable tip based on the user's score to help them improve.";
+    const userQuery = `The user scored ${score} out of ${quizQuestions.length} on a quiz about civic sense. Provide a single, concise tip to help them improve. The tip should be encouraging and focus on a specific, easy-to-do action.`;
+    const apiKey = "";
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+    const payload = {
+        contents: [{ parts: [{ text: userQuery }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+    };
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        const generatedText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (generatedText) {
+            setTipText(generatedText);
+        } else {
+            setTipText('Failed to generate tip. Please try again.');
+        }
+    } catch (error) {
+        console.error("Error generating tip:", error);
+        setTipText('An error occurred. Please try again.');
+    } finally {
+        setIsGeneratingTip(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center p-8 min-h-screen">
+      <h2 className="text-3xl font-bold text-white mb-6">Your Progress</h2>
+      <div className="bg-gray-800 rounded-xl shadow-2xl p-6 md:p-10 w-full max-w-2xl text-gray-200 text-center">
+        <p className="text-xl mb-4">Your current score is: <span className="text-purple-400 font-bold">{score} / {quizQuestions.length}</span></p>
+        <div className="w-full bg-gray-600 rounded-full h-4 mb-4 overflow-hidden">
+          <div
+            className="bg-purple-500 h-4 rounded-full transition-all duration-700 ease-out"
+            style={{ width: `${progressPercentage}%` }}
+          ></div>
+        </div>
+        <p className="text-md mb-6">{progressPercentage.toFixed(0)}% Complete</p>
+        <button
+          onClick={handleGenerateTip}
+          disabled={isGeneratingTip}
+          className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-6 rounded-full shadow-lg transition duration-300 mb-4"
+        >
+          {isGeneratingTip ? 'Generating Tip...' : '✨ Get a Personalized Tip'}
+        </button>
+        {tipText && (
+            <div className="mt-4 p-4 bg-gray-700 rounded-lg">
+              <h4 className="font-semibold mb-2">Your Tip:</h4>
+              <p className="text-sm">{tipText}</p>
+            </div>
+          )}
+        <button
+          onClick={() => onNavigate('home')}
+          className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 hover:scale-105 mt-6"
+        >
+          Go Back Home
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// The main App component
+const App = () => {
+  const [currentView, setCurrentView] = useState('home');
+  const [civicScore, setCivicScore] = useState(0);
+
+  const handleQuizComplete = (finalScore) => {
+    setCivicScore(finalScore);
+    setCurrentView('progress');
+  };
+
+  const renderView = () => {
+    switch (currentView) {
+      case 'home':
+        return <Home onNavigate={setCurrentView} />;
+      case 'learn':
+        return <Learning onNavigate={setCurrentView} />;
+      case 'quiz':
+        return <Quiz onNavigate={setCurrentView} onQuizComplete={handleQuizComplete} />;
+      case 'progress':
+        return <Progress score={civicScore} onNavigate={setCurrentView} />;
+      default:
+        return <Home onNavigate={setCurrentView} />;
+    }
+  };
+
+  return (
+    <>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+      <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+      <style>{`
+        body {
+          background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+          font-family: 'Inter', sans-serif;
+        }
+      `}</style>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        {/* Navigation bar */}
+        <nav className="fixed top-0 left-0 right-0 z-50 p-4 bg-gray-900 bg-opacity-80 backdrop-blur-sm shadow-lg">
+          <div className="flex justify-center space-x-4 md:space-x-8">
+            <button
+              onClick={() => setCurrentView('home')}
+              className="text-gray-300 hover:text-white transition duration-200"
+            >
+              Home
+            </button>
+            <button
+              onClick={() => setCurrentView('learn')}
+              className="text-gray-300 hover:text-white transition duration-200"
+            >
+              Learn
+            </button>
+            <button
+              onClick={() => setCurrentView('quiz')}
+              className="text-gray-300 hover:text-white transition duration-200"
+            >
+              Quiz
+            </button>
+            <button
+              onClick={() => setCurrentView('progress')}
+              className="text-gray-300 hover:text-white transition duration-200"
+            >
+              Progress
+            </button>
+          </div>
+        </nav>
+        <main className="mt-20 w-full max-w-6xl">
+          {renderView()}
+        </main>
+      </div>
+    </>
+  );
+};
+
+export default App;
