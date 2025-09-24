@@ -3,6 +3,10 @@
 import categories from "@/data/Category";
 import quizQuestions from "@/data/Quiz";
 import React, { useState, useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const App = () => {
   const [currentView, setCurrentView] = useState("home");
@@ -74,12 +78,12 @@ const App = () => {
           overflow-x: hidden;
         }
         .dark body, .dark html {
-          background: linear-gradient(135deg, #2a3e5e, #1a2a44);
+          background: linear-gradient(135deg, #0d1222 0%, #171d2b 100%);
           color: #fff;
         }
         .light body, .light html {
-          background: linear-gradient(135deg, #e2e8f0, #f8fafc);
-          color: #333;
+          background: linear-gradient(135deg, #eaf0f9 0%, #f6f9fc 100%);
+          color: #2c3e50;
         }
 
         /* Glass card effect for dark mode */
@@ -88,9 +92,11 @@ const App = () => {
           backdrop-filter: blur(10px);
           border: 1px solid rgba(255, 255, 255, 0.18);
           box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+          transition: all 0.3s ease;
         }
         .dark .glass-card:hover {
             box-shadow: 0 8px 48px 0 rgba(109, 40, 217, 0.5);
+            transform: translateY(-5px);
         }
         /* Glass card effect for light mode */
         .light .glass-card {
@@ -98,71 +104,49 @@ const App = () => {
           backdrop-filter: blur(10px);
           border: 1px solid rgba(255, 255, 255, 0.8);
           box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+          transition: all 0.3s ease;
         }
         .light .glass-card:hover {
             box-shadow: 0 8px 48px 0 rgba(109, 40, 217, 0.2);
+            transform: translateY(-5px);
         }
 
         /* Navigation links for dark mode */
-        .dark .nav-link {
-          color: #d1d5db;
+        .dark .nav-link, .dark .nav-icon {
+          color: #e0e7ff;
+          transition: all 0.3s ease;
         }
-        .dark .nav-link:hover {
+        .dark .nav-link:hover, .dark .nav-icon:hover {
           color: #fff;
-          background: rgba(255, 255, 255, 0.1);
-        }
-        .dark .nav-icon {
-          color: #d1d5db;
-        }
-        .dark .nav-icon:hover {
-            color: #fff;
+          background: rgba(255, 255, 255, 0.15);
         }
 
         /* Navigation links for light mode */
-        .light .nav-link {
-          color: #4b5563;
+        .light .nav-link, .light .nav-icon {
+          color: #2c3e50;
+          transition: all 0.3s ease;
         }
-        .light .nav-link:hover {
+        .light .nav-link:hover, .light .nav-icon:hover {
           color: #000;
-          background: rgba(0, 0, 0, 0.05);
-        }
-        .light .nav-icon {
-            color: #4b5563;
-        }
-        .light .nav-icon:hover {
-            color: #000;
+          background: rgba(0, 0, 0, 0.1);
         }
 
         /* Themed text colors */
-        .dark .themed-text {
-            color: #fff;
+        .themed-text {
+          transition: color 0.3s ease;
         }
-        .light .themed-text {
-            color: #111;
-        }
-        .dark .themed-subtext {
-            color: #9ca3af;
-        }
-        .light .themed-subtext {
-            color: #4b5563;
-        }
-        .dark .themed-card-text {
-            color: #fff;
-        }
-        .light .themed-card-text {
-            color: #111;
-        }
-        .dark .themed-card-subtext {
-            color: #d1d5db;
-        }
-        .light .themed-card-subtext {
-            color: #4b5563;
-        }
-        .dark .themed-link {
-            color: #c084fc;
-        }
-        .light .themed-link {
-            color: #7c3aed;
+        .dark .themed-text { color: #fff; }
+        .light .themed-text { color: #1e273a; }
+        .dark .themed-subtext { color: #a5b4fc; }
+        .light .themed-subtext { color: #4a5568; }
+        .dark .themed-card-text { color: #fff; }
+        .light .themed-card-text { color: #1e273a; }
+        .dark .themed-card-subtext { color: #d1d5db; }
+        .light .themed-card-subtext { color: #4a5568; }
+        .dark .themed-link { color: #c4b5fd; }
+        .light .themed-link { color: #7c3aed; }
+        .input-field {
+          transition: all 0.3s ease;
         }
         .dark .input-field {
             background-color: rgba(255, 255, 255, 0.1);
@@ -190,7 +174,7 @@ const App = () => {
               {currentView === "learn" && selectedCategory && (
                 <button
                   onClick={handleNavigateToCategories}
-                  className="mr-4 transition duration-200 nav-icon"
+                  className="mr-4 transition duration-200 nav-icon p-2 rounded-full"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -210,40 +194,40 @@ const App = () => {
               )}
             </div>
             {/* Center navigation buttons */}
-            <div className="flex space-x-4 md:space-x-8">
+            <div className="flex space-x-2 md:space-x-4">
               <button
                 onClick={() => setCurrentView("home")}
-                className="nav-link font-medium px-4 py-2 rounded-full"
+                className="nav-link font-medium px-3 py-2 md:px-4 md:py-2 rounded-full"
               >
                 Home
               </button>
               <button
                 onClick={() => setCurrentView("learn")}
-                className="nav-link font-medium px-4 py-2 rounded-full"
+                className="nav-link font-medium px-3 py-2 md:px-4 md:py-2 rounded-full"
               >
                 Learn
               </button>
               <button
                 onClick={() => setCurrentView("quiz")}
-                className="nav-link font-medium px-4 py-2 rounded-full"
+                className="nav-link font-medium px-3 py-2 md:px-4 md:py-2 rounded-full"
               >
                 Quiz
               </button>
               <button
                 onClick={() => setCurrentView("progress")}
-                className="nav-link font-medium px-4 py-2 rounded-full"
+                className="nav-link font-medium px-3 py-2 md:px-4 md:py-2 rounded-full"
               >
                 Progress
               </button>
               <button
                 onClick={() => setCurrentView("about")}
-                className="nav-link font-medium px-4 py-2 rounded-full"
+                className="nav-link font-medium px-3 py-2 md:px-4 md:py-2 rounded-full"
               >
                 About
               </button>
               <button
                 onClick={() => setCurrentView("contact")}
-                className="nav-link font-medium px-4 py-2 rounded-full"
+                className="nav-link font-medium px-3 py-2 md:px-4 md:py-2 rounded-full"
               >
                 Contact
               </button>
@@ -252,7 +236,7 @@ const App = () => {
             <div className="flex items-center">
               <button
                 onClick={() => setIsDarkMode(!isDarkMode)}
-                className="nav-icon transition duration-200"
+                className="nav-icon transition duration-200 p-2 rounded-full"
               >
                 {isDarkMode ? (
                   <svg
@@ -299,7 +283,7 @@ const Home = ({ onNavigate }) => (
     </p>
     <button
       onClick={() => onNavigate("learn")}
-      className="bg-white bg-opacity-10 themed-text font-bold py-4 px-10 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105 hover:bg-opacity-20 backdrop-blur-md dark:bg-opacity-10 dark:text-white light:bg-gray-200 light:bg-opacity-70 light:hover:bg-gray-300 light:text-gray-800"
+      className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-4 px-10 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105"
     >
       Start Learning
     </button>
@@ -552,9 +536,9 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
 
 const CategoryCard = ({ category, onClick }) => {
   const cardRef = useRef(null);
+  const gsap = window.gsap;
 
   useEffect(() => {
-    const gsap = window.gsap;
     if (gsap) {
       gsap.fromTo(
         cardRef.current,
@@ -565,16 +549,14 @@ const CategoryCard = ({ category, onClick }) => {
   }, []);
 
   const handleMouseEnter = () => {
-    const gsap = window.gsap;
-    if (gsap) {
-      gsap.to(cardRef.current, { scale: 1.05, duration: 0.3 });
+    if (window.gsap) {
+      window.gsap.to(cardRef.current, { scale: 1.05, duration: 0.3 });
     }
   };
 
   const handleMouseLeave = () => {
-    const gsap = window.gsap;
-    if (gsap) {
-      gsap.to(cardRef.current, { scale: 1, duration: 0.3 });
+    if (window.gsap) {
+      window.gsap.to(cardRef.current, { scale: 1, duration: 0.3 });
     }
   };
 
@@ -777,22 +759,31 @@ const Progress = ({ score, onNavigate }) => {
 
 const About = () => (
   <div className="flex flex-col items-center p-8 min-h-[calc(100vh-6rem)]">
+    <h2 className="text-3xl font-bold themed-text mb-6">About the Developer</h2>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl">
-      <div className="glass-card rounded-3xl p-8 flex flex-col items-center justify-center text-center">
-        <img
-          src="https://placehold.co/200x200/94a3b8/e2e8f0?text=HS"
-          alt="Hariom Sharma"
-          className="w-48 h-48 rounded-full object-cover mb-4 ring-4 ring-purple-400 ring-offset-4 ring-offset-transparent"
-        />
-        <h3 className="text-2xl font-bold themed-text mb-2">Hariom Sharma</h3>
-        <p className="text-lg themed-subtext">Software Developer</p>
-        <button className="mt-6 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105">
+      {/* Left Card: Profile & Image */}
+      <div className="glass-card rounded-3xl p-8 flex flex-col items-center text-center">
+        <div className="w-48 h-48 rounded-full overflow-hidden mb-4 border-4 border-purple-400">
+          <img
+            src="https://placehold.co/200x200/94a3b8/e2e8f0?text=HS"
+            alt="Hariom Sharma"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <h3 className="text-2xl font-bold themed-text mb-1">Hariom Sharma</h3>
+        <p className="text-lg themed-subtext mb-6">Software Developer</p>
+        <button className="mt-auto bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105">
           Download CV
         </button>
       </div>
+
+      {/* Right Column: Details & Socials */}
       <div className="flex flex-col space-y-8">
+        {/* About Me Card */}
         <div className="glass-card rounded-3xl p-8">
-          <h4 className="text-xl font-bold themed-text mb-4">About Me</h4>
+          <h4 className="text-xl font-bold themed-text mb-4 flex items-center">
+            About Me
+          </h4>
           <p className="text-md leading-relaxed themed-subtext mb-4">
             I am a passionate software developer with 5+ years of experience in
             creating intuitive and robust web applications. I specialize in
@@ -808,6 +799,8 @@ const About = () => (
             and rewarding experience.
           </p>
         </div>
+
+        {/* Social Presence Card */}
         <div className="glass-card rounded-3xl p-8">
           <h4 className="text-xl font-bold themed-text mb-4">
             Social Presence
