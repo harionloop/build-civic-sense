@@ -15,14 +15,14 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
   const [showChapterComplete, setShowChapterComplete] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [timer, setTimer] = useState(3);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const chapterRef = useRef(null);
   const observerRef = useRef(null);
   const confettiRef = useRef(null);
   const lottieRef = useRef(null);
+  const mainContentRef = useRef(null);
 
-  const isLastChapter =
-    selectedCategory?.chapters &&
-    currentChapterIndex === selectedCategory.chapters.length - 1;
+  const isLastChapter = selectedCategory?.chapters && currentChapterIndex === selectedCategory.chapters.length - 1;
   const isScrollComplete = scrollProgress >= 99;
 
   useEffect(() => {
@@ -63,7 +63,8 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
   }, [selectedCategory, currentChapterIndex]);
 
   useEffect(() => {
-    if (showChapterComplete && confettiRef.current) {
+    const gsap = window.gsap;
+    if (showChapterComplete && confettiRef.current && gsap) {
       let countdown = 3;
       setTimer(countdown);
 
@@ -76,26 +77,27 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
           scale: 1,
           duration: 0.5,
           ease: "back.out(1.7)",
+          onComplete: () => {
+             const timerInterval = setInterval(() => {
+                countdown--;
+                setTimer(countdown);
+                if (countdown === 0) {
+                  clearInterval(timerInterval);
+                  gsap.to(confettiRef.current, {
+                    opacity: 0,
+                    y: 50,
+                    duration: 0.5,
+                    ease: "power2.in",
+                    onComplete: () => {
+                      setShowChapterComplete(false);
+                      setShowModal(true);
+                    },
+                  });
+                }
+              }, 1000);
+          },
         }
       );
-
-      const timerInterval = setInterval(() => {
-        countdown--;
-        setTimer(countdown);
-        if (countdown === 0) {
-          clearInterval(timerInterval);
-          gsap.to(confettiRef.current, {
-            opacity: 0,
-            y: 50,
-            duration: 0.5,
-            ease: "power2.in",
-            onComplete: () => {
-              setShowChapterComplete(false);
-              setShowModal(true);
-            },
-          });
-        }
-      }, 1000);
     }
   }, [showChapterComplete]);
 
@@ -103,24 +105,24 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
     if (scrollProgress < 99) return;
 
     if (isLastChapter) {
-      setShowChapterComplete(true);
+        setShowChapterComplete(true);
     } else {
-      setCurrentChapterIndex(currentChapterIndex + 1);
-      if (chapterRef.current) {
-        chapterRef.current.scrollTop = 0;
-      }
+        setCurrentChapterIndex(currentChapterIndex + 1);
+        if (chapterRef.current) {
+          chapterRef.current.scrollTop = 0;
+        }
     }
   };
 
   const handleGoToQuiz = () => {
     setShowModal(false);
     onNavigate("quiz");
-  };
+  }
 
   const handleGoToCategories = () => {
     setShowModal(false);
     setSelectedCategory(null);
-  };
+  }
 
   const handleScroll = () => {
     if (chapterRef.current) {
@@ -135,11 +137,14 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
   const handleGenerateSummary = async () => {
     setIsSummarizing(true);
     setSummaryText("");
-    const currentContent = selectedCategory.chapters[currentChapterIndex].sections
+    const currentContent = selectedCategory.chapters[
+      currentChapterIndex
+    ].sections
       .map((s) => s.content?.join(" "))
       .filter(Boolean)
       .join(" ");
-    const systemPrompt = "Act as a helpful study guide. Provide a concise, single-paragraph summary of the following text.";
+    const systemPrompt =
+      "Act as a helpful study guide. Provide a concise, single-paragraph summary of the following text.";
     const userQuery = `Summarize the following content in a single paragraph: ${currentContent}`;
     const apiKey = "";
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
@@ -163,11 +168,15 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
         setSummaryText("Failed to generate summary. Please try again.");
       }
     } catch (error) {
-      // console.error("Error generating summary:", error);
+      console.error("Error generating summary:", error);
       setSummaryText("An error occurred. Please try again.");
     } finally {
       setIsSummarizing(false);
     }
+  };
+
+  const handleToggleFullscreen = () => {
+    setIsFullScreen(!isFullScreen);
   };
 
   if (!selectedCategory) {
@@ -195,9 +204,23 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
   const currentChapter = selectedCategory.chapters[currentChapterIndex];
 
   return (
-    <div className="flex flex-col items-center p-8 min-h-[calc(100vh-6rem)]">
-      <h2 className="text-3xl font-bold themed-text mb-6">Learning Center</h2>
-      <div className="glass-card rounded-3xl p-6 md:p-10 w-full max-w-4xl themed-subtext">
+    <div className={`p-8 ${isFullScreen ? 'fixed inset-0 z-[100]' : 'min-h-[calc(100vh-6rem)]'}`}>
+      <div ref={mainContentRef} className={`overflow-auto glass-card rounded-3xl p-6 md:p-10 w-full max-w-4xl themed-subtext mx-auto ${isFullScreen ? 'w-screen h-screen max-w-full rounded-none' : ''}`}>
+        <div className={`flex justify-between items-center ${isFullScreen ? 'fixed top-4 right-4 z-[101]' : ''}`}>
+            <h2 className={`text-3xl font-bold themed-text mb-6 ${isFullScreen ? 'hidden' : ''}`}>Learning Center</h2>
+            <button onClick={handleToggleFullscreen} className="themed-link hover:text-purple-400 transition-colors duration-300 p-2 rounded-full">
+            {isFullScreen ? (
+                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9l-3 3m0 0l3 3m-3-3h14m-12-3l3-3m0 0l-3-3m3 3h-14m12 0l-3 3" />
+               </svg>
+            ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9l-3 3m0 0l3 3m-3-3h14m-12-3l3-3m0 0l-3-3m3 3h-14m12 0l-3 3" />
+                </svg>
+            )}
+            </button>
+        </div>
+
         <h3 className="text-2xl font-semibold themed-link mb-4 text-center">
           {selectedCategory.title} - {currentChapter.title}
         </h3>
@@ -371,5 +394,4 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
     </div>
   );
 };
-
 export default Learning;
