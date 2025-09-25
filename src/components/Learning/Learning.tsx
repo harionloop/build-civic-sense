@@ -18,6 +18,8 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
   const chapterRef = useRef(null);
   const observerRef = useRef(null);
   const confettiRef = useRef(null);
+  const lottieRef = useRef(null);
+
   const isLastChapter =
     selectedCategory?.chapters &&
     currentChapterIndex === selectedCategory.chapters.length - 1;
@@ -61,8 +63,7 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
   }, [selectedCategory, currentChapterIndex]);
 
   useEffect(() => {
-    const gsap = window.gsap;
-    if (showChapterComplete && confettiRef.current && gsap) {
+    if (showChapterComplete && confettiRef.current) {
       let countdown = 3;
       setTimer(countdown);
 
@@ -75,27 +76,26 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
           scale: 1,
           duration: 0.5,
           ease: "back.out(1.7)",
-          onComplete: () => {
-            const timerInterval = setInterval(() => {
-              countdown--;
-              setTimer(countdown);
-              if (countdown === 0) {
-                clearInterval(timerInterval);
-                gsap.to(confettiRef.current, {
-                  opacity: 0,
-                  y: 50,
-                  duration: 0.5,
-                  ease: "power2.in",
-                  onComplete: () => {
-                    setShowChapterComplete(false);
-                    setShowModal(true);
-                  },
-                });
-              }
-            }, 1000);
-          },
         }
       );
+
+      const timerInterval = setInterval(() => {
+        countdown--;
+        setTimer(countdown);
+        if (countdown === 0) {
+          clearInterval(timerInterval);
+          gsap.to(confettiRef.current, {
+            opacity: 0,
+            y: 50,
+            duration: 0.5,
+            ease: "power2.in",
+            onComplete: () => {
+              setShowChapterComplete(false);
+              setShowModal(true);
+            },
+          });
+        }
+      }, 1000);
     }
   }, [showChapterComplete]);
 
@@ -135,14 +135,11 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
   const handleGenerateSummary = async () => {
     setIsSummarizing(true);
     setSummaryText("");
-    const currentContent = selectedCategory.chapters[
-      currentChapterIndex
-    ].sections
+    const currentContent = selectedCategory.chapters[currentChapterIndex].sections
       .map((s) => s.content?.join(" "))
       .filter(Boolean)
       .join(" ");
-    const systemPrompt =
-      "Act as a helpful study guide. Provide a concise, single-paragraph summary of the following text.";
+    const systemPrompt = "Act as a helpful study guide. Provide a concise, single-paragraph summary of the following text.";
     const userQuery = `Summarize the following content in a single paragraph: ${currentContent}`;
     const apiKey = "";
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
@@ -163,11 +160,11 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
       if (generatedText) {
         setSummaryText(generatedText);
       } else {
-        setSubmitMessage("Failed to generate summary. Please try again.");
+        setSummaryText("Failed to generate summary. Please try again.");
       }
     } catch (error) {
-      console.error("Error generating summary:", error);
-      setSubmitMessage("An error occurred. Please try again.");
+      // console.error("Error generating summary:", error);
+      setSummaryText("An error occurred. Please try again.");
     } finally {
       setIsSummarizing(false);
     }
@@ -205,6 +202,20 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
           {selectedCategory.title} - {currentChapter.title}
         </h3>
 
+        {/* Lottie Animation at the top of the chapter */}
+        <div className="w-64 h-64 mx-auto mb-6 flex items-center justify-center">
+          <lottie-player
+            ref={lottieRef}
+            // src="https://lottie.host/dc9ae052-081d-45ab-bca5-7f314cfa27a6/NwEErtUVwN.json"
+            src="https://lottie.host/42f98f19-ceba-46f7-b6af-b824f8eec804/yQVGDJs3Rs.json"
+            // src={currentChapter.lottie}
+            autoplay
+            loop={true}
+            mode="normal"
+            style={{ width: "100%", height: "100%" }}
+          ></lottie-player>
+        </div>
+
         {/* Overall Chapter Progress Bar */}
         <div className="w-full h-2 mb-4 bg-white bg-opacity-10 rounded-full dark:bg-opacity-10 light:bg-gray-300">
           <div
@@ -236,7 +247,7 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
                 {section.lottie && (
                   <div className="w-64 h-64 mx-auto mb-6 flex items-center justify-center">
                     <lottie-player
-                      src={JSON.stringify(section.lottie)}
+                      src={section.lottie}
                       autoplay
                       loop
                       mode="normal"
@@ -337,7 +348,7 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
                 : "hover:scale-105"
             }`}
           >
-            {isLastChapter ? "Complete Chapter!" : "Next Chapter"}
+            {isLastChapter ? "Complete!" : "Next Chapter"}
           </button>
         </div>
 
