@@ -5,7 +5,6 @@ import CategoryCard from "./CategoryCard";
 import { useState, useEffect, useRef } from "react";
 import categories from "@/data/Category";
 
-
 gsap.registerPlugin(ScrollTrigger);
 
 const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
@@ -13,15 +12,22 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
   const [summaryText, setSummaryText] = useState("");
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [showChapterComplete, setShowChapterComplete] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [timer, setTimer] = useState(3);
   const chapterRef = useRef(null);
   const observerRef = useRef(null);
+  const confettiRef = useRef(null);
+  const isLastChapter =
+    selectedCategory?.chapters &&
+    currentChapterIndex === selectedCategory.chapters.length - 1;
+  const isScrollComplete = scrollProgress >= 99;
 
   useEffect(() => {
     const gsap = window.gsap;
     const ScrollTrigger = window.ScrollTrigger;
     if (chapterRef.current && gsap && ScrollTrigger) {
       gsap.registerPlugin(ScrollTrigger);
-      // Create a new IntersectionObserver for fade-in effect on scroll
       observerRef.current = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
@@ -43,12 +49,10 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
         },
         { threshold: 0.3 }
       );
-      // Observe all sections
       const sections = chapterRef.current.querySelectorAll(".learning-section");
       sections.forEach((section) => observerRef.current.observe(section));
     }
 
-    // Cleanup observer on component unmount
     return () => {
       if (observerRef.current) {
         observerRef.current.disconnect();
@@ -56,20 +60,75 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
     };
   }, [selectedCategory, currentChapterIndex]);
 
+  useEffect(() => {
+    const gsap = window.gsap;
+    if (showChapterComplete && confettiRef.current && gsap) {
+      let countdown = 3;
+      setTimer(countdown);
+
+      gsap.fromTo(
+        confettiRef.current,
+        { opacity: 0, y: -50, scale: 0.8 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.5,
+          ease: "back.out(1.7)",
+          onComplete: () => {
+            const timerInterval = setInterval(() => {
+              countdown--;
+              setTimer(countdown);
+              if (countdown === 0) {
+                clearInterval(timerInterval);
+                gsap.to(confettiRef.current, {
+                  opacity: 0,
+                  y: 50,
+                  duration: 0.5,
+                  ease: "power2.in",
+                  onComplete: () => {
+                    setShowChapterComplete(false);
+                    setShowModal(true);
+                  },
+                });
+              }
+            }, 1000);
+          },
+        }
+      );
+    }
+  }, [showChapterComplete]);
+
   const handleNextChapter = () => {
-    if (currentChapterIndex < selectedCategory.chapters.length - 1) {
-      setCurrentChapterIndex(currentChapterIndex + 1);
-      chapterRef.current.scrollTop = 0; // Scroll to top of new chapter
+    if (scrollProgress < 99) return;
+
+    if (isLastChapter) {
+      setShowChapterComplete(true);
     } else {
-      onNavigate("quiz");
+      setCurrentChapterIndex(currentChapterIndex + 1);
+      if (chapterRef.current) {
+        chapterRef.current.scrollTop = 0;
+      }
     }
   };
 
+  const handleGoToQuiz = () => {
+    setShowModal(false);
+    onNavigate("quiz");
+  };
+
+  const handleGoToCategories = () => {
+    setShowModal(false);
+    setSelectedCategory(null);
+  };
+
   const handleScroll = () => {
-    const { scrollTop, scrollHeight, clientHeight } = chapterRef.current;
-    if (scrollHeight > clientHeight) {
-      const progress = (scrollTop / (scrollHeight - clientHeight)) * 100;
-      setScrollProgress(progress);
+    if (chapterRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = chapterRef.current;
+      if (scrollHeight > clientHeight) {
+        const progress = (scrollTop / (scrollHeight - clientHeight)) * 100;
+        setScrollProgress(progress);
+      }
     }
   };
 
@@ -104,11 +163,11 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
       if (generatedText) {
         setSummaryText(generatedText);
       } else {
-        setSummaryText("Failed to generate summary. Please try again.");
+        setSubmitMessage("Failed to generate summary. Please try again.");
       }
     } catch (error) {
       console.error("Error generating summary:", error);
-      setSummaryText("An error occurred. Please try again.");
+      setSubmitMessage("An error occurred. Please try again.");
     } finally {
       setIsSummarizing(false);
     }
@@ -210,25 +269,75 @@ const Learning = ({ onNavigate, selectedCategory, setSelectedCategory }) => {
           ))}
         </div>
 
+        {showChapterComplete && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-70 backdrop-blur-sm z-50">
+            <div
+              ref={confettiRef}
+              className="text-center text-white text-4xl font-extrabold flex flex-col items-center"
+            >
+              <lottie-player
+                src="https://assets10.lottiefiles.com/packages/lf20_touohxv0.json"
+                autoplay
+                loop={true}
+                mode="normal"
+                style={{ width: "300px", height: "300px" }}
+              ></lottie-player>
+              <h4 className="themed-text text-xl md:text-2xl mt-4">
+                Congratulations!
+              </h4>
+              <p className="themed-subtext opacity-80 mt-2">
+                Chapter complete.
+              </p>
+              <p className="themed-text mt-4 text-sm font-light">
+                This window will close in {timer} seconds...
+              </p>
+            </div>
+          </div>
+        )}
+
+        {showModal && (
+          <div className="fixed inset-0 flex items-center justify-center z-[100] bg-gray-900 bg-opacity-70 backdrop-blur-sm">
+            <div className="glass-card p-8 rounded-3xl text-center max-w-sm w-full">
+              <h3 className="text-2xl font-bold themed-text mb-4">
+                Chapter Completed!
+              </h3>
+              <p className="themed-subtext mb-6">
+                You've successfully finished this chapter.
+              </p>
+              <div className="flex flex-col space-y-4">
+                <button
+                  onClick={handleGoToQuiz}
+                  className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105"
+                >
+                  Start Quiz
+                </button>
+                <button
+                  onClick={handleGoToCategories}
+                  className="glass-card themed-card-text font-bold py-3 px-8 rounded-full transition duration-300 dark:bg-opacity-10 dark:hover:bg-opacity-20 light:bg-gray-200 light:text-gray-800 light:hover:bg-gray-300"
+                >
+                  Back to Categories
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="flex justify-between mt-6 w-full max-w-sm">
           <button
-            onClick={() => setSelectedCategory(null)}
+            onClick={handleGoToCategories}
             className={`glass-card themed-card-text font-bold py-2 px-6 rounded-full transition duration-300 dark:bg-opacity-10 dark:hover:bg-opacity-20 light:bg-gray-200 light:text-gray-800 light:hover:bg-gray-300`}
           >
             Back to Categories
           </button>
           <button
             onClick={handleNextChapter}
-            disabled={scrollProgress < 99}
+            disabled={!isScrollComplete}
             className={`bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-2 px-6 rounded-full shadow-lg transform transition duration-300 ${
-              scrollProgress < 99
+              !isScrollComplete
                 ? "opacity-50 cursor-not-allowed"
                 : "hover:scale-105"
             }`}
           >
-            {currentChapterIndex === selectedCategory.chapters.length - 1
-              ? "Go to Quiz"
-              : "Next Chapter"}
+            {isLastChapter ? "Complete Chapter!" : "Next Chapter"}
           </button>
         </div>
 
